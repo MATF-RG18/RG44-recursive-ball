@@ -16,6 +16,7 @@ extern double left_wall, right_wall, bottom_wall, top_wall;
 
 void draw_player(void)
 {
+
     glEnable(GL_COLOR);
     glPushMatrix();
     double clip_plane[] = {0, 1, 0, 1};
@@ -33,7 +34,8 @@ void draw_player(void)
 }
 void player_moving(char c)
 {
-    if(weapon_fired){
+    if (weapon_fired)
+    {
         return;
     }
 

@@ -9,11 +9,14 @@
 #include "player_functions.h"
 #include "background.h"
 
-
 #define TIMER_ID 0
 #define TIMER_INTERVAL 50
 
-static GLuint textureNames[2];
+GLuint textureNames[2];
+
+#define WALLTEXTURE 0
+#define FLOORTEXTURE 1
+#define SPHERETEXTURE 2
 
 Positions balls[7];
 
@@ -128,14 +131,14 @@ static void initialize_texture()
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
   background = background_init(0, 0);
-  char* fileName1="window5.bmp";
-  char* fileName2="concrete2.bmp";
- 
- 
-  background_read(background, fileName1);
-  glGenTextures(2, textureNames);
+  char *fileName1 = "window5.bmp";
+  char *fileName2 = "concrete2.bmp";
+  char *fileName3 = "textures/ball_texture.bmp";
 
-  glBindTexture(GL_TEXTURE_2D, textureNames[0]);
+  background_read(background, fileName1);
+  glGenTextures(3, textureNames);
+
+  glBindTexture(GL_TEXTURE_2D, textureNames[WALLTEXTURE]);
   glTexParameteri(GL_TEXTURE_2D,
                   GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D,
@@ -146,12 +149,12 @@ static void initialize_texture()
                background->width, background->height, 0,
                GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
 
-  //Iskljucujemo aktivnu teksturu
+  //Disable active texture
   glBindTexture(GL_TEXTURE_2D, 0);
 
-  /*buttom*/
+  /*bottom*/
   background_read(background, fileName2);
-  glBindTexture(GL_TEXTURE_2D, textureNames[1]);
+  glBindTexture(GL_TEXTURE_2D, textureNames[FLOORTEXTURE]);
   glTexParameteri(GL_TEXTURE_2D,
                   GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D,
@@ -162,7 +165,20 @@ static void initialize_texture()
                background->width, background->height, 0,
                GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
 
-    //Unistava se objekat za itanje tekstura iz fajla
+  /*sphere texture */
+  background_read(background, fileName3);
+  glBindTexture(GL_TEXTURE_2D, textureNames[SPHERETEXTURE]);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+               background->width, background->height, 0,
+               GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
+
+  //delete object that reads texture from file
   background_done(background);
 }
 static void on_keyboard(unsigned char key, int x, int y)
@@ -241,7 +257,6 @@ static void on_display(void)
 
   draw_coordinate_system();
   set_texture();
- 
 
   if (weapon_fired == 1)
   {
@@ -289,10 +304,10 @@ static void screen_light(void)
   glMaterialfv(GL_FRONT, GL_SPECULAR, specular_coeffs);
   glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 }
-static void set_texture(){
- /*Kreiramo povrsinu po kojoj ce biti zalepljena tekstura
-  povezujemo odgovarajuce coskove citave povrsine sa coskovima teksture*/
-  glBindTexture(GL_TEXTURE_2D, textureNames[0]);
+static void set_texture()
+{
+  /*Texture binded with the area */
+  glBindTexture(GL_TEXTURE_2D, textureNames[WALLTEXTURE]);
   glBegin(GL_QUADS);
   glNormal3f(0, 0, 1);
 
@@ -309,9 +324,9 @@ static void set_texture(){
   glVertex3f(left_wall, 1, -1);
   glEnd();
 
-  //levi zid
+  //left wall
   glBindTexture(GL_TEXTURE_2D, 0);
-  glBindTexture(GL_TEXTURE_2D, textureNames[0]);
+  glBindTexture(GL_TEXTURE_2D, textureNames[WALLTEXTURE]);
   glBegin(GL_QUADS);
   glNormal3f(0, 0, 1);
 
@@ -328,9 +343,9 @@ static void set_texture(){
   glVertex3f(left_wall, 1, 1);
   glEnd();
 
-  //desni zid
+  //right wall
   glBindTexture(GL_TEXTURE_2D, 0);
-  glBindTexture(GL_TEXTURE_2D, textureNames[0]);
+  glBindTexture(GL_TEXTURE_2D, textureNames[WALLTEXTURE]);
   glBegin(GL_QUADS);
   glNormal3f(0, 0, 1);
 
@@ -350,7 +365,7 @@ static void set_texture(){
   glBindTexture(GL_TEXTURE_2D, 0);
 
   /*bottom*/
-  glBindTexture(GL_TEXTURE_2D, textureNames[1]);
+  glBindTexture(GL_TEXTURE_2D, textureNames[FLOORTEXTURE]);
   glBegin(GL_QUADS);
   glNormal3f(0, 0, 1);
 
@@ -370,7 +385,7 @@ static void set_texture(){
   glBindTexture(GL_TEXTURE_2D, 0);
 
   /*top*/
-  glBindTexture(GL_TEXTURE_2D, textureNames[1]);
+  glBindTexture(GL_TEXTURE_2D, textureNames[FLOORTEXTURE]);
   glBegin(GL_QUADS);
   glNormal3f(0, 0, 1);
 
@@ -388,7 +403,4 @@ static void set_texture(){
   glEnd();
 
   glBindTexture(GL_TEXTURE_2D, 0);
-
-
-
 }
