@@ -60,12 +60,12 @@ void ball_moving(int ball_id)
         {
             if (balls[i].alive)
             {
-                check_coalition(ball_id, i);
+                check_collision(ball_id, i);
             }
         }
     }
 }
-void check_coalition(int ball_id, int i)
+void check_collision(int ball_id, int i)
 {
     if ((distance(ball_id, i) - balls[ball_id].radius - balls[i].radius) <= eps)
     {

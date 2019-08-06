@@ -20,7 +20,7 @@ typedef struct
 void draw_ball(void);
 void ball_light(void);
 void ball_moving(int ball_id);
-void check_coalition(int ball_id, int i);
+void check_collision(int ball_id, int i);
 void check_walls(int ball_id);
 void change_direction(int ball_id, int mode);
 double distance(int ball_id, int i);

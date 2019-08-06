@@ -266,7 +266,7 @@ static void on_timer(int value)
     }
   }
 
-  player_coalision();
+  player_collision();
 
   glutPostRedisplay();
 

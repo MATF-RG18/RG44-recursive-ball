@@ -31,7 +31,7 @@ Background *background_init(int width, int height)
 }
 
 void background_done(Background *background)
-{   
+{
     /*Oslobadja se prostor za cuvanje podataka o pikselima 
     i prostor strukture*/
     free(background->pixels);
@@ -90,14 +90,13 @@ void background_read(Background *background, char *filename)
     }
     assert(background->pixels != NULL);
 
-
-    
-    if (bih.bitcount == 24){
+    if (bih.bitcount == 24)
+    {
         /*po pikselu se cita 24 bita = 3 bajta informacija, pretposavljamo
         da oni (ta 3 bajta) predstavljaju R,G i B komponentu boje (1 bajt po komponenti)*/
         for (i = 0; i < bih.width * bih.height; i++)
         {
-             /*Komponente boje se citaju u obrnutom redosledu, B,G,R*/
+            /*Komponente boje se citaju u obrnutom redosledu, B,G,R*/
             fread(&b, sizeof(char), 1, file);
             fread(&g, sizeof(char), 1, file);
             fread(&r, sizeof(char), 1, file);
@@ -107,7 +106,8 @@ void background_read(Background *background, char *filename)
             background->pixels[3 * i + 2] = b;
         }
     }
-    else if (bih.bitcount == 32){
+    else if (bih.bitcount == 32)
+    {
         /*Po pikselu cita 3 bita = 4 bajta 
         R G B i A (1 bajt po komponenti)*/
         for (i = 0; i < bih.width * bih.height; i++)

@@ -100,7 +100,7 @@ void player_moving(char c)
         break;
     }
 }
-void player_coalision(void)
+void player_collision(void)
 {
     for (int i = 0; i < 7; i++)
     {

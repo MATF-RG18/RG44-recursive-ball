@@ -8,7 +8,7 @@
 #include <math.h>
 
 void draw_player(void);
-void player_coalision(void);
+void player_collision(void);
 void player_moving(char c);
 
 #endif
