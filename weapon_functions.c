@@ -20,12 +20,15 @@ void fire_weapon()
 {
     if (weapon_fired == 1 && weapon_height <= top_wall + eps)
     {
-        glLineWidth(3.1);
+        glLineWidth(2.1);
         glBegin(GL_LINES);
-        glColor3f(1, 1, 1);
+
+        glColor3f(1, 0, 0);
         glVertex3f(weapon_position, -1.0, 0);
         glVertex3f(weapon_position, weapon_height, 0);
+
         glEnd();
+
         glLineWidth(1.f);
         weapon_height += weapon_speed;
         check_hit();

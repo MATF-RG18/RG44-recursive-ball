@@ -12,12 +12,13 @@
 #define TIMER_ID 0
 #define TIMER_INTERVAL 50
 
-GLuint textureNames[2];
+GLuint textureNames[5];
 
 #define WALLTEXTURE 0
 #define FLOORTEXTURE 1
 #define SPHERETEXTURE 2
-
+#define BODYTEXTURE 3
+#define HEADTEXTURE 4
 Positions balls[7];
 
 int i = 0;
@@ -30,11 +31,12 @@ double left_wall = -1.79, right_wall = 1.79, bottom_wall = -1.0, top_wall = 1.0;
 /*player coordinates*/
 double player_x = 0, player_y = -1, player_z = 0;
 double player_radius = 0.075;
+double player_height = 0.2;
 double player_movement = 0.05;
 
 /*describe weapon*/
 double weapon_height = -1.0;
-double weapon_speed = 0.02;
+double weapon_speed = 0.04;
 double weapon_position = 0;
 int weapon_fired = 0;
 
@@ -43,7 +45,7 @@ static void draw_coordinate_system(void);
 static void screen_light(void);
 
 /*animation information*/
-static int animation_ongoing = 0;
+int animation_ongoing = 0;
 
 /*information about camera*/
 static float cameraX = 0, cameraY = 0, cameraZ = 2.75;
@@ -103,8 +105,8 @@ int main(int argc, char **argv)
   }
   /*position of a main ball*/
   srand(time(NULL));
-  balls[0].poz_x = ((double)rand() / (double)RAND_MAX) * 1.70 * (rand() / (double)RAND_MAX > 0.5 ? 1.0 : -1.0);
-  balls[0].poz_y = ((double)rand() / (double)RAND_MAX);
+  balls[0].poz_x = ((double)rand() / (double)RAND_MAX) * (right_wall - 0.2) * (rand() / (double)RAND_MAX > 0.5 ? 1.0 : -1.0);
+  balls[0].poz_y = ((double)rand() / (double)RAND_MAX) * (top_wall - 0.2);
   double tmp_x = -(double)rand() / (double)RAND_MAX;
   double tmp_y = -1.0;
   double norm_tmp = sqrt(pow(tmp_x - balls[0].poz_x, 2) + pow(tmp_y - balls[0].poz_y, 2));
@@ -134,9 +136,11 @@ static void initialize_texture()
   char *fileName1 = "window5.bmp";
   char *fileName2 = "concrete2.bmp";
   char *fileName3 = "textures/ball_texture.bmp";
+  char *fileName4 = "textures/body_texture.bmp";
+  char *fileName5 = "textures/head_texture.bmp";
 
   background_read(background, fileName1);
-  glGenTextures(3, textureNames);
+  glGenTextures(5, textureNames);
 
   glBindTexture(GL_TEXTURE_2D, textureNames[WALLTEXTURE]);
   glTexParameteri(GL_TEXTURE_2D,
@@ -178,6 +182,31 @@ static void initialize_texture()
                background->width, background->height, 0,
                GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
 
+  /*body texture */
+  background_read(background, fileName4);
+  glBindTexture(GL_TEXTURE_2D, textureNames[BODYTEXTURE]);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+               background->width, background->height, 0,
+               GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
+
+  /*arm textures */
+  background_read(background, fileName5);
+  glBindTexture(GL_TEXTURE_2D, textureNames[HEADTEXTURE]);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+               background->width, background->height, 0,
+               GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
   //delete object that reads texture from file
   background_done(background);
 }
@@ -236,6 +265,8 @@ static void on_timer(int value)
       ball_moving(i);
     }
   }
+
+  player_coalision();
 
   glutPostRedisplay();
 
