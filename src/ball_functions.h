@@ -17,6 +17,7 @@ typedef struct
     int alive;
 } Positions;
 
+void init_ball(void);
 void draw_ball(void);
 void ball_light(void);
 void ball_moving(int ball_id);

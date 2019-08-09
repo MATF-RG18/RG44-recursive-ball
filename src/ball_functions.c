@@ -8,17 +8,39 @@
 
 #define SPHERETEXTURE 2
 
-extern Positions balls[7];
+Positions balls[7];
 extern GLuint textureNames[5];
 
 int angle = 0;
 
 /*ball speed*/
-extern double speed;
-extern double eps;
+double speed = -10.0;
+double eps = 0.0001;
 
 extern double left_wall, right_wall, bottom_wall, top_wall;
 
+void init_ball(void)
+{
+    for (int i = 0; i < 7; i++)
+    {
+        balls[i].poz_x = 0;
+        balls[i].poz_y = 0;
+        balls[i].n_x = 0;
+        balls[i].n_y = 0;
+        balls[i].radius = 0;
+        balls[i].alive = 0;
+    }
+    srand(time(NULL));
+    balls[0].poz_x = ((double)rand() / (double)RAND_MAX) * (right_wall - 0.2) * (rand() / (double)RAND_MAX > 0.5 ? 1.0 : -1.0);
+    balls[0].poz_y = ((double)rand() / (double)RAND_MAX) * (top_wall - 0.2);
+    double tmp_x = -(double)rand() / (double)RAND_MAX;
+    double tmp_y = -1.0;
+    double norm_tmp = sqrt(pow(tmp_x - balls[0].poz_x, 2) + pow(tmp_y - balls[0].poz_y, 2));
+    balls[0].n_x = ((tmp_x - balls[0].poz_x) / norm_tmp) / speed;
+    balls[0].n_y = ((tmp_y - balls[0].poz_y) / norm_tmp) / speed;
+    balls[0].radius = 0.2;
+    balls[0].alive = 1;
+}
 void draw_ball(void)
 {
     for (int i = 0; i < 7; i++)

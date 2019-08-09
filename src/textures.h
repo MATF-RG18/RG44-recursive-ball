@@ -9,6 +9,5 @@
 #include <assert.h>
 
 void initialize_textures();
-void set_texture();
 
 #endif

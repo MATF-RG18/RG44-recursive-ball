@@ -7,14 +7,19 @@
 #include "weapon_functions.h"
 #include "ball_functions.h"
 
-extern double weapon_height;
-extern double weapon_speed;
-extern double weapon_position;
-extern int weapon_fired;
+#define WALLTEXTURE 0
+#define FLOORTEXTURE 1
+
+double weapon_height = -1.0;
+double weapon_speed = 0.04;
+double weapon_position = 0;
+int weapon_fired = 0;
 extern double eps;
 extern Positions balls[7];
 
 extern double left_wall, right_wall, bottom_wall, top_wall;
+
+int balls_left = 7;
 
 void fire_weapon()
 {
@@ -50,6 +55,7 @@ void check_hit()
                 weapon_fired = 0;
                 weapon_height = -1.0;
                 ball_divition(i);
+                balls_left -= 1;
                 break;
             }
         }

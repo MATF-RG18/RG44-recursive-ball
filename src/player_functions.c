@@ -7,10 +7,10 @@
 #include "player_functions.h"
 #include "ball_functions.h"
 
-extern double player_x, player_y, player_z;
-extern double player_radius;
-extern double player_movement;
-extern double player_height;
+double player_x = 0, player_y = -1, player_z = 0;
+double player_radius = 0.075;
+double player_movement = 0.05;
+double player_height = 0.2;
 
 extern int weapon_fired;
 
