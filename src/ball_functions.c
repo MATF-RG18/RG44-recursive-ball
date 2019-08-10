@@ -7,20 +7,22 @@
 #include "ball_functions.h"
 
 #define SPHERETEXTURE 2
+#define TEXTURE_NUMBER 6
 
 Positions balls[7];
-extern GLuint textureNames[5];
+extern GLuint textureNames[TEXTURE_NUMBER];
 
 int angle = 0;
 
 /*ball speed*/
-double speed = -10.0;
+double speed = 10.0;
 double eps = 0.0001;
 
 extern double left_wall, right_wall, bottom_wall, top_wall;
 
 void init_ball(void)
 {
+    speed = 10.0;
     for (int i = 0; i < 7; i++)
     {
         balls[i].poz_x = 0;
@@ -47,15 +49,7 @@ void draw_ball(void)
     {
         if (balls[i].alive)
         {
-            /*
-            glEnable(GL_COLOR);
-            glPushMatrix();
-            glTranslatef(balls[i].poz_x, balls[i].poz_y, 0);
-            ball_light();
-            glutSolidSphere(balls[i].radius, 50, 50);
-            glPopMatrix();
-            glDisable(GL_COLOR);*/
-            glEnable(GL_COLOR);
+
             GLUquadricObj *quadricObj = gluNewQuadric();
             gluQuadricDrawStyle(quadricObj, GLU_FILL);
             glBindTexture(GL_TEXTURE_2D, textureNames[SPHERETEXTURE]);
@@ -67,7 +61,6 @@ void draw_ball(void)
             angle += 5;
             gluSphere(quadricObj, balls[i].radius, 50, 50);
             glPopMatrix();
-            glDisable(GL_COLOR);
         }
     }
 }

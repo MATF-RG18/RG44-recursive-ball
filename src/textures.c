@@ -10,8 +10,11 @@
 #define SPHERETEXTURE 2
 #define BODYTEXTURE 3
 #define HEADTEXTURE 4
+#define GAMEOVER 5
 
-GLuint textureNames[5];
+#define TEXTURE_NUMBER 6
+
+GLuint textureNames[TEXTURE_NUMBER];
 
 extern int left_wall, right_wall;
 
@@ -29,9 +32,10 @@ void initialize_textures()
   char *fileName3 = "textures/ball_texture.bmp";
   char *fileName4 = "textures/body_texture.bmp";
   char *fileName5 = "textures/head_texture.bmp";
+  char *fileName6 = "textures/game_over.bmp";
 
   background_read(background, fileName1);
-  glGenTextures(5, textureNames);
+  glGenTextures(6, textureNames);
 
   glBindTexture(GL_TEXTURE_2D, textureNames[WALLTEXTURE]);
   glTexParameteri(GL_TEXTURE_2D,
@@ -45,7 +49,7 @@ void initialize_textures()
                GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
 
   //Disable active texture
-  glBindTexture(GL_TEXTURE_2D, 0);
+  //glBindTexture(GL_TEXTURE_2D, 0);
 
   /*bottom*/
   background_read(background, fileName2);
@@ -60,6 +64,8 @@ void initialize_textures()
                background->width, background->height, 0,
                GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
 
+  //glBindTexture(GL_TEXTURE_2D, 0);
+
   /*sphere texture */
   background_read(background, fileName3);
   glBindTexture(GL_TEXTURE_2D, textureNames[SPHERETEXTURE]);
@@ -72,6 +78,8 @@ void initialize_textures()
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
                background->width, background->height, 0,
                GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
+
+  //glBindTexture(GL_TEXTURE_2D, 0);
 
   /*body texture */
   background_read(background, fileName4);
@@ -86,6 +94,8 @@ void initialize_textures()
                background->width, background->height, 0,
                GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
 
+  //glBindTexture(GL_TEXTURE_2D, 0);
+
   /*arm textures */
   background_read(background, fileName5);
   glBindTexture(GL_TEXTURE_2D, textureNames[HEADTEXTURE]);
@@ -98,6 +108,25 @@ void initialize_textures()
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
                background->width, background->height, 0,
                GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
+
+  //glBindTexture(GL_TEXTURE_2D, 0);
+
+  /*gameover textures */
+  background_read(background, fileName6);
+  glBindTexture(GL_TEXTURE_2D, textureNames[GAMEOVER]);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+               background->width, background->height, 0,
+               GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
+  //glBindTexture(GL_TEXTURE_2D, 0);
+
+  //glDisable(GL_TEXTURE_2D);
+
   //delete object that reads texture from file
   background_done(background);
 }

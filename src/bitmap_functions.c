@@ -14,6 +14,7 @@ void bitmap_output(float x, float y, char *string, void *font)
 
     for (i = 0; i < len; i++)
     {
+
         glutBitmapCharacter(font, string[i]);
     }
     glPopMatrix();

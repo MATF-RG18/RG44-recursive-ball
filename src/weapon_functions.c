@@ -6,9 +6,12 @@
 
 #include "weapon_functions.h"
 #include "ball_functions.h"
+#include "textures.h"
 
-#define WALLTEXTURE 0
-#define FLOORTEXTURE 1
+//#define WALLTEXTURE 0
+//#define FLOORTEXTURE 1
+
+//define TEXTURE_NUMBER 6
 
 double weapon_height = -1.0;
 double weapon_speed = 0.04;
@@ -17,9 +20,18 @@ int weapon_fired = 0;
 extern double eps;
 extern Positions balls[7];
 
+extern double player_height;
+
 extern double left_wall, right_wall, bottom_wall, top_wall;
 
 int balls_left = 7;
+void init_weapon()
+{
+    weapon_height = -1.0;
+    weapon_speed = 0.04;
+    weapon_position = 0;
+    weapon_fired = 0;
+}
 
 void fire_weapon()
 {
@@ -28,11 +40,15 @@ void fire_weapon()
         glLineWidth(2.1);
         glBegin(GL_LINES);
 
-        glColor3f(1, 0, 0);
-        glVertex3f(weapon_position, -1.0, 0);
+        glColor3f(0, 0, 1);
+        glEnable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
+        glVertex3f(weapon_position, -1.0 + player_height, 0);
         glVertex3f(weapon_position, weapon_height, 0);
 
         glEnd();
+        glDisable(GL_LIGHTING);
+        glEnable(GL_TEXTURE_2D);
 
         glLineWidth(1.f);
         weapon_height += weapon_speed;

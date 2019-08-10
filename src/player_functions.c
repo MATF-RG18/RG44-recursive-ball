@@ -6,6 +6,11 @@
 
 #include "player_functions.h"
 #include "ball_functions.h"
+#include "textures.h"
+
+#define BODYTEXTURE 3
+#define HEADTEXTURE 4
+#define TEXTURE_NUMBER 6
 
 double player_x = 0, player_y = -1, player_z = 0;
 double player_radius = 0.075;
@@ -15,14 +20,13 @@ double player_height = 0.2;
 extern int weapon_fired;
 
 extern double left_wall, right_wall, bottom_wall, top_wall;
-extern GLuint textureNames[5];
+extern GLuint textureNames[TEXTURE_NUMBER];
 
 extern Positions balls[7];
 extern int animation_ongoing;
 extern double eps;
 
-#define BODYTEXTURE 3
-#define HEADTEXTURE 4
+extern int game_end;
 
 void draw_player(void)
 {
@@ -31,7 +35,6 @@ void draw_player(void)
     GLUquadric *players_head = gluNewQuadric();
     GLUquadric *players_leftarm = gluNewQuadric();
     GLUquadric *players_rightarm = gluNewQuadric();
-    glEnable(GL_COLOR);
     glPushMatrix();
     /*body */
     glTranslatef(player_x, player_y, player_z);
@@ -41,8 +44,6 @@ void draw_player(void)
     gluQuadricTexture(players_body, GL_TRUE);
     gluQuadricNormals(players_body, GLU_SMOOTH);
     gluCylinder(players_body, player_radius, player_radius, player_height, 50, 50);
-
-    glColor3f(192.0 / 255.0, 192.0 / 255.0, 192.0 / 255.0);
 
     /*head */
     glTranslatef(0, 0, player_height);
@@ -69,7 +70,6 @@ void draw_player(void)
     gluCylinder(players_leftarm, player_radius / 2.0, player_radius / 2.0, player_height / 3.0, 50, 50);
 
     glPopMatrix();
-    glDisable(GL_COLOR);
 }
 void player_moving(char c)
 {
@@ -110,6 +110,7 @@ void player_collision(void)
                 ((balls[i].poz_y + eps) < (bottom_wall + player_height + balls[i].radius)))
             {
                 animation_ongoing = 0;
+                game_end = 1;
             }
         }
     }

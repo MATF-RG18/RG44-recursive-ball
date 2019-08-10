@@ -17,10 +17,12 @@
 
 #define WALLTEXTURE 0
 #define FLOORTEXTURE 1
+#define TEXTURE_NUMBER 6
+#define GAMEOVER 5
 
 int nivo;
 
-extern GLuint textureNames[5];
+extern GLuint textureNames[TEXTURE_NUMBER];
 
 extern Positions balls[7];
 extern int balls_left;
@@ -38,26 +40,25 @@ extern double player_movement;
 extern double weapon_position;
 extern int weapon_fired;
 
-/*functions for scene
-static void draw_coordinate_system(void);
-*/
-//static void screen_light(void);
-
 /*animation information*/
 int animation_ongoing = 0;
 
 /*information about camera*/
 static float cameraX = 0, cameraY = 0, cameraZ = 2.75;
 
+int game_end = 0;
+
 /*callback function*/
 static void on_keyboard(unsigned char key, int x, int y);
 static void on_reshape(int width, int height);
 static void on_display(void);
 static void display_start_screen(void);
+static void display_end_screen(void);
 static void on_timer(int value);
 
 //static void initialize_texture(void);
 static void set_texture(void);
+static void set_end_texture(void);
 
 int main(int argc, char **argv)
 {
@@ -67,6 +68,13 @@ int main(int argc, char **argv)
   GLfloat light_diffuse[] = {0.7, 0.7, 0.7, 1};
   GLfloat light_specular[] = {0.9, 0.9, 0.9, 1};
   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
+
+  /*light*/
+  glEnable(GL_LIGHT0);
+  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
   /*glut init*/
   glutInit(&argc, argv);
@@ -86,13 +94,6 @@ int main(int argc, char **argv)
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_LIGHTING);
-
-  /*light*/
-  glEnable(GL_LIGHT0);
-  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
   init_ball();
 
@@ -141,18 +142,25 @@ static void on_keyboard(unsigned char key, int x, int y)
       weapon_position = player_x;
       weapon_fired = 1;
     }
+    break;
   case '1':
     nivo = 1;
+    init_ball();
+    init_weapon();
     glutDisplayFunc(on_display);
     glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
     break;
   case '2':
     nivo = 2;
+    init_ball();
+    init_weapon();
     glutDisplayFunc(on_display);
     glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
     break;
   case '3':
     nivo = 3;
+    init_ball();
+    init_weapon();
     glutDisplayFunc(on_display);
     glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
     break;
@@ -180,6 +188,12 @@ static void on_timer(int value)
   }
 
   player_collision();
+
+  if (game_end)
+  {
+    glutDisplayFunc(display_end_screen);
+    game_end = 0;
+  }
 
   glutPostRedisplay();
 
@@ -223,26 +237,51 @@ static void display_start_screen(void)
             0, 0, 0,
             0, 10, 0);
 
-  glTranslatef(0, -1.5, 0);
-  glColor3f(1, 0, 1);
-  glLineWidth(GL_LINE_LOOP);
-  glVertex2f(-3, 2);
-  glVertex2f(3, 2);
-  glVertex2f(3, 0.5);
-  glVertex2f(-3, 0.5);
-  glEnd();
-
-  glColor3f(1, 0, 0);
-  bitmap_output(-1.0, 1.7, "Select level: ", GLUT_BITMAP_TIMES_ROMAN_24);
-
-  bitmap_output(-1.0, 1.2, "1 - nivo  ", GLUT_BITMAP_TIMES_ROMAN_24);
-  bitmap_output(-1.0, 0.7, "2 - nivo ", GLUT_BITMAP_TIMES_ROMAN_24);
-  bitmap_output(-1.0, 0.2, "3 - nivo ", GLUT_BITMAP_TIMES_ROMAN_24);
-
-  glTranslatef(0, 1.5, 0);
-
+  glColor3f(0, 1, 0);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+  bitmap_output(-1.3, 3.0, "-- FIREBALL -- ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-1.0, 1.7, "Choose level: ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-1.0, 1.2, "1 - level  ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-1.0, 0.7, "2 - level ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-1.0, 0.2, "3 - level ", GLUT_BITMAP_TIMES_ROMAN_24);
+  glEnable(GL_LIGHTING);
+  glEnable(GL_TEXTURE_2D);
   glFlush();
   glutSwapBuffers();
+}
+static void display_end_screen(void)
+{
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  gluLookAt(0, 0, 10,
+            0, 0, 0,
+            0, 10, 0);
+
+  set_end_texture();
+  glFlush();
+  glutSwapBuffers();
+}
+static void set_end_texture()
+{
+  glBindTexture(GL_TEXTURE_2D, textureNames[GAMEOVER]);
+  glBegin(GL_QUADS);
+  glNormal3f(0, 0, 1);
+
+  glTexCoord2f(0, 0);
+  glVertex3f(-1, -1, 1);
+
+  glTexCoord2f(1, 0);
+  glVertex3f(1, -1, 1);
+
+  glTexCoord2f(1, 1);
+  glVertex3f(1, 1, 1);
+
+  glTexCoord2f(0, 1);
+  glVertex3f(-1, 1, 1);
+  glEnd();
 }
 
 static void set_texture()

@@ -7,6 +7,7 @@
 #include <time.h>
 #include <math.h>
 
+void init_weapon();
 void fire_weapon();
 void check_hit();
 
