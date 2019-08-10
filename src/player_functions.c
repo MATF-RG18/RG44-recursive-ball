@@ -10,7 +10,7 @@
 
 #define BODYTEXTURE 3
 #define HEADTEXTURE 4
-#define TEXTURE_NUMBER 6
+#define TEXTURE_NUMBER 7
 
 double player_x = 0, player_y = -1, player_z = 0;
 double player_radius = 0.075;

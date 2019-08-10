@@ -11,8 +11,9 @@
 #define BODYTEXTURE 3
 #define HEADTEXTURE 4
 #define GAMEOVER 5
+#define GAMESTART 6
 
-#define TEXTURE_NUMBER 6
+#define TEXTURE_NUMBER 7
 
 GLuint textureNames[TEXTURE_NUMBER];
 
@@ -33,6 +34,7 @@ void initialize_textures()
   char *fileName4 = "textures/body_texture.bmp";
   char *fileName5 = "textures/head_texture.bmp";
   char *fileName6 = "textures/game_over.bmp";
+  char *fileName7 = "textures/start_game.bmp";
 
   background_read(background, fileName1);
   glGenTextures(6, textureNames);
@@ -125,7 +127,20 @@ void initialize_textures()
                GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
   //glBindTexture(GL_TEXTURE_2D, 0);
 
-  //glDisable(GL_TEXTURE_2D);
+  /*gamestart */
+  background_read(background, fileName7);
+  glBindTexture(GL_TEXTURE_2D, textureNames[GAMESTART]);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+               background->width, background->height, 0,
+               GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
+
+  glBindTexture(GL_TEXTURE_2D, 0);
 
   //delete object that reads texture from file
   background_done(background);

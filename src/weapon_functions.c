@@ -14,7 +14,7 @@
 //define TEXTURE_NUMBER 6
 
 double weapon_height = -1.0;
-double weapon_speed = 0.04;
+double weapon_speed = 0.09;
 double weapon_position = 0;
 int weapon_fired = 0;
 extern double eps;
@@ -24,11 +24,14 @@ extern double player_height;
 
 extern double left_wall, right_wall, bottom_wall, top_wall;
 
+extern int nivo;
+extern int game_success;
+
 int balls_left = 7;
 void init_weapon()
 {
     weapon_height = -1.0;
-    weapon_speed = 0.04;
+    weapon_speed = 0.09;
     weapon_position = 0;
     weapon_fired = 0;
 }
@@ -41,13 +44,13 @@ void fire_weapon()
         glBegin(GL_LINES);
 
         glColor3f(0, 0, 1);
-        glEnable(GL_LIGHTING);
+        glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
         glVertex3f(weapon_position, -1.0 + player_height, 0);
         glVertex3f(weapon_position, weapon_height, 0);
 
         glEnd();
-        glDisable(GL_LIGHTING);
+        glEnable(GL_LIGHTING);
         glEnable(GL_TEXTURE_2D);
 
         glLineWidth(1.f);
@@ -71,7 +74,22 @@ void check_hit()
                 weapon_fired = 0;
                 weapon_height = -1.0;
                 ball_divition(i);
+
                 balls_left -= 1;
+                if (balls_left == 0)
+                {
+                    nivo += 1;
+                    if (nivo == 4)
+                    {
+                        nivo = 0;
+                        game_success = 1;
+                        break;
+                    }
+                    balls_left = 7;
+                    init_ball();
+                    init_weapon();
+                }
+
                 break;
             }
         }

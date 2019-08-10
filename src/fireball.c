@@ -17,17 +17,19 @@
 
 #define WALLTEXTURE 0
 #define FLOORTEXTURE 1
-#define TEXTURE_NUMBER 6
 #define GAMEOVER 5
+#define GAMESTART 6
 
-int nivo;
+#define TEXTURE_NUMBER 7
+
+int nivo = 0;
+int game_success = 0;
 
 extern GLuint textureNames[TEXTURE_NUMBER];
 
 extern Positions balls[7];
 extern int balls_left;
-
-int screen_help = 0;
+extern double speed;
 
 /*speed of ball and epsilon distance from walls and other balls*/
 double left_wall = -1.79, right_wall = 1.79, bottom_wall = -1.0, top_wall = 1.0;
@@ -47,6 +49,7 @@ int animation_ongoing = 0;
 static float cameraX = 0, cameraY = 0, cameraZ = 2.75;
 
 int game_end = 0;
+int start_game = 1;
 
 /*callback function*/
 static void on_keyboard(unsigned char key, int x, int y);
@@ -59,6 +62,7 @@ static void on_timer(int value);
 //static void initialize_texture(void);
 static void set_texture(void);
 static void set_end_texture(void);
+static void set_start_textures();
 
 int main(int argc, char **argv)
 {
@@ -114,17 +118,27 @@ static void on_keyboard(unsigned char key, int x, int y)
     glDeleteTextures(1, textureNames);
     exit(0);
     break;
-  case 'g':
-  case 'G':
+  case 's':
+  case 'S':
     /*animation start*/
+    if (start_game == 1)
+    {
+      nivo = 1;
+      init_ball();
+      init_weapon();
+      glutDisplayFunc(on_display);
+      glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
+
+      start_game = 0;
+    }
     if (!animation_ongoing)
     {
       glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
       animation_ongoing = 1;
     }
     break;
-  case 's':
-  case 'S':
+  case 'p':
+  case 'P':
     /*animation end*/
     animation_ongoing = 0;
     break;
@@ -143,6 +157,7 @@ static void on_keyboard(unsigned char key, int x, int y)
       weapon_fired = 1;
     }
     break;
+    /*
   case '1':
     nivo = 1;
     init_ball();
@@ -163,7 +178,7 @@ static void on_keyboard(unsigned char key, int x, int y)
     init_weapon();
     glutDisplayFunc(on_display);
     glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
-    break;
+    break;*/
   }
 }
 
@@ -193,6 +208,26 @@ static void on_timer(int value)
   {
     glutDisplayFunc(display_end_screen);
     game_end = 0;
+    top_wall = 1.0;
+    speed = 30.0;
+    start_game = 1;
+    nivo = 1;
+    balls_left = 7;
+  }
+  if (game_success == 1)
+  {
+    game_success = 0;
+    glutDisplayFunc(display_start_screen);
+    top_wall = 1.0;
+    speed = 30.0;
+    start_game = 1;
+    nivo = 1;
+    balls_left = 7;
+  }
+
+  if (nivo == 3)
+  {
+    top_wall -= 0.001;
   }
 
   glutPostRedisplay();
@@ -233,20 +268,26 @@ static void display_start_screen(void)
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(0, 0, 10,
+  gluLookAt(0, 0, 5,
             0, 0, 0,
-            0, 10, 0);
+            0, 1, 0);
 
-  glColor3f(0, 1, 0);
+  set_start_textures();
+
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
-  bitmap_output(-1.3, 3.0, "-- FIREBALL -- ", GLUT_BITMAP_TIMES_ROMAN_24);
-  bitmap_output(-1.0, 1.7, "Choose level: ", GLUT_BITMAP_TIMES_ROMAN_24);
-  bitmap_output(-1.0, 1.2, "1 - level  ", GLUT_BITMAP_TIMES_ROMAN_24);
-  bitmap_output(-1.0, 0.7, "2 - level ", GLUT_BITMAP_TIMES_ROMAN_24);
-  bitmap_output(-1.0, 0.2, "3 - level ", GLUT_BITMAP_TIMES_ROMAN_24);
+  glColor3f(0.8, 0.8, 0.8);
+  bitmap_output(-4.9, -2.3, " Press - s - for start ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, -2.5, " Press - esc - for exit ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, -2.7, " Press - p - to pause the game ", GLUT_BITMAP_TIMES_ROMAN_24);
+
+  /*(-4.9, 2.7, " FireBall ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, 2.5, " Game has 3 levels ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, 2.3, " Good luck! ", GLUT_BITMAP_TIMES_ROMAN_24);*/
+
   glEnable(GL_LIGHTING);
   glEnable(GL_TEXTURE_2D);
+
   glFlush();
   glutSwapBuffers();
 }
@@ -256,11 +297,20 @@ static void display_end_screen(void)
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(0, 0, 10,
+  gluLookAt(0, 0, 5,
             0, 0, 0,
-            0, 10, 0);
+            0, 1, 0);
 
   set_end_texture();
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+  glColor3f(0.8, 0.8, 0.8);
+  bitmap_output(-4.9, -2.3, " Press - s - for start ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, -2.5, " Press - esc - for exit ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, -2.7, " Press - p - to pause the game ", GLUT_BITMAP_TIMES_ROMAN_24);
+
+  glEnable(GL_LIGHTING);
+  glEnable(GL_TEXTURE_2D);
   glFlush();
   glutSwapBuffers();
 }
@@ -283,7 +333,25 @@ static void set_end_texture()
   glVertex3f(-1, 1, 1);
   glEnd();
 }
+static void set_start_textures()
+{
+  glBindTexture(GL_TEXTURE_2D, textureNames[GAMESTART]);
+  glBegin(GL_QUADS);
+  glNormal3f(0, 0, 1);
 
+  glTexCoord2f(0, 0);
+  glVertex3f(-2, -2, 1);
+
+  glTexCoord2f(1, 0);
+  glVertex3f(2, -2, 1);
+
+  glTexCoord2f(1, 1);
+  glVertex3f(2, 2, 1);
+
+  glTexCoord2f(0, 1);
+  glVertex3f(-2, 2, 1);
+  glEnd();
+}
 static void set_texture()
 {
   //Texture binded with the area
@@ -292,16 +360,16 @@ static void set_texture()
   glNormal3f(0, 0, 1);
 
   glTexCoord2f(0, 0);
-  glVertex3f(left_wall, -1, -1);
+  glVertex3f(left_wall, bottom_wall, -1);
 
   glTexCoord2f(1, 0);
-  glVertex3f(right_wall, -1, -1);
+  glVertex3f(right_wall, bottom_wall, -1);
 
   glTexCoord2f(1, 1);
-  glVertex3f(right_wall, 1, -1);
+  glVertex3f(right_wall, top_wall, -1);
 
   glTexCoord2f(0, 1);
-  glVertex3f(left_wall, 1, -1);
+  glVertex3f(left_wall, top_wall, -1);
   glEnd();
 
   //left wall
@@ -311,16 +379,16 @@ static void set_texture()
   glNormal3f(0, 0, 1);
 
   glTexCoord2f(0, 0);
-  glVertex3f(left_wall, -1, 1);
+  glVertex3f(left_wall, bottom_wall, 1);
 
   glTexCoord2f(1, 0);
-  glVertex3f(left_wall, -1, -1);
+  glVertex3f(left_wall, bottom_wall, -1);
 
   glTexCoord2f(1, 1);
-  glVertex3f(left_wall, 1, -1);
+  glVertex3f(left_wall, top_wall, -1);
 
   glTexCoord2f(0, 1);
-  glVertex3f(left_wall, 1, 1);
+  glVertex3f(left_wall, top_wall, 1);
   glEnd();
 
   //right wall
@@ -330,16 +398,16 @@ static void set_texture()
   glNormal3f(0, 0, 1);
 
   glTexCoord2f(0, 0);
-  glVertex3f(right_wall, -1, -1);
+  glVertex3f(right_wall, bottom_wall, -1);
 
   glTexCoord2f(1, 0);
-  glVertex3f(right_wall, -1, 1);
+  glVertex3f(right_wall, bottom_wall, 1);
 
   glTexCoord2f(1, 1);
-  glVertex3f(right_wall, 1, 1);
+  glVertex3f(right_wall, top_wall, 1);
 
   glTexCoord2f(0, 1);
-  glVertex3f(right_wall, 1, -1);
+  glVertex3f(right_wall, top_wall, -1);
   glEnd();
 
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -350,16 +418,16 @@ static void set_texture()
   glNormal3f(0, 0, 1);
 
   glTexCoord2f(0, 0);
-  glVertex3f(left_wall, -1, 1);
+  glVertex3f(left_wall, bottom_wall, 1);
 
   glTexCoord2f(1, 0);
-  glVertex3f(right_wall, -1, 1);
+  glVertex3f(right_wall, bottom_wall, 1);
 
   glTexCoord2f(1, 1);
-  glVertex3f(right_wall, -1, -1);
+  glVertex3f(right_wall, bottom_wall, -1);
 
   glTexCoord2f(0, 1);
-  glVertex3f(left_wall, -1, -1);
+  glVertex3f(left_wall, bottom_wall, -1);
   glEnd();
 
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -370,16 +438,16 @@ static void set_texture()
   glNormal3f(0, 0, 1);
 
   glTexCoord2f(0, 0);
-  glVertex3f(left_wall, 1, 1);
+  glVertex3f(left_wall, top_wall, 1);
 
   glTexCoord2f(1, 0);
-  glVertex3f(right_wall, 1, 1);
+  glVertex3f(right_wall, top_wall, 1);
 
   glTexCoord2f(1, 1);
-  glVertex3f(right_wall, 1, -1);
+  glVertex3f(right_wall, top_wall, -1);
 
   glTexCoord2f(0, 1);
-  glVertex3f(left_wall, 1, -1);
+  glVertex3f(left_wall, top_wall, -1);
   glEnd();
 
   glBindTexture(GL_TEXTURE_2D, 0);

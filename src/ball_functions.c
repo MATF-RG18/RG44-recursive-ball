@@ -7,7 +7,7 @@
 #include "ball_functions.h"
 
 #define SPHERETEXTURE 2
-#define TEXTURE_NUMBER 6
+#define TEXTURE_NUMBER 7
 
 Positions balls[7];
 extern GLuint textureNames[TEXTURE_NUMBER];
@@ -15,14 +15,21 @@ extern GLuint textureNames[TEXTURE_NUMBER];
 int angle = 0;
 
 /*ball speed*/
-double speed = 10.0;
+double speed = 30.0;
 double eps = 0.0001;
 
 extern double left_wall, right_wall, bottom_wall, top_wall;
 
+extern int nivo;
+
 void init_ball(void)
 {
-    speed = 10.0;
+
+    speed = 30.0;
+    if (nivo == 2)
+    {
+        speed = 20.0;
+    }
     for (int i = 0; i < 7; i++)
     {
         balls[i].poz_x = 0;
@@ -33,14 +40,20 @@ void init_ball(void)
         balls[i].alive = 0;
     }
     srand(time(NULL));
-    balls[0].poz_x = ((double)rand() / (double)RAND_MAX) * (right_wall - 0.2) * (rand() / (double)RAND_MAX > 0.5 ? 1.0 : -1.0);
-    balls[0].poz_y = ((double)rand() / (double)RAND_MAX) * (top_wall - 0.2);
+    balls[0].radius = 0.1;
+    balls[0].poz_x = ((double)rand() / (double)RAND_MAX) * (right_wall - balls[0].radius) * (rand() / (double)RAND_MAX > 0.5 ? 1.0 : -1.0);
+    balls[0].poz_y = ((double)rand() / (double)RAND_MAX) * (top_wall - balls[0].radius);
     double tmp_x = -(double)rand() / (double)RAND_MAX;
     double tmp_y = -1.0;
     double norm_tmp = sqrt(pow(tmp_x - balls[0].poz_x, 2) + pow(tmp_y - balls[0].poz_y, 2));
     balls[0].n_x = ((tmp_x - balls[0].poz_x) / norm_tmp) / speed;
     balls[0].n_y = ((tmp_y - balls[0].poz_y) / norm_tmp) / speed;
-    balls[0].radius = 0.2;
+
+    if (nivo == 2)
+    {
+        balls[0].radius = 0.2;
+    }
+
     balls[0].alive = 1;
 }
 void draw_ball(void)
@@ -118,6 +131,7 @@ void check_walls(int ball_id)
 }
 void change_direction(int ball_id, int mode)
 {
+
     if (mode == 0)
     {
         balls[ball_id].n_x *= -1;
@@ -135,6 +149,7 @@ void ball_divition(int ball_id)
 {
     if (balls[ball_id].alive == 1)
     {
+
         if (ball_id == 0)
         {
             balls[1].radius = balls[0].radius / 2.0;
@@ -144,9 +159,9 @@ void ball_divition(int ball_id)
             balls[1].poz_y = balls[0].poz_y - balls[0].radius;
             balls[2].poz_y = balls[0].poz_y - balls[0].radius;
             balls[1].n_x = balls[0].n_x / 1.2;
-            balls[1].n_y = balls[0].n_y / 1.2;
+            balls[1].n_y = fabs(balls[0].n_y / 1.2);
             balls[2].n_x = balls[0].n_x * (-1.0) / 1.2;
-            balls[2].n_y = balls[0].n_y / 1.2;
+            balls[2].n_y = fabs(balls[0].n_y / 1.2);
             balls[0].alive = 0;
             balls[1].alive = 1;
             balls[2].alive = 1;
@@ -164,9 +179,9 @@ void ball_divition(int ball_id)
             balls[3].poz_y = balls[1].poz_y - balls[1].radius;
             balls[4].poz_y = balls[1].poz_y - balls[1].radius;
             balls[3].n_x = balls[1].n_x / 1.2;
-            balls[3].n_y = balls[1].n_y / 1.2;
+            balls[3].n_y = fabs(balls[1].n_y / 1.2);
             balls[4].n_x = balls[1].n_x * (-1.0) / 1.2;
-            balls[4].n_y = balls[1].n_y / 1.2;
+            balls[4].n_y = fabs(balls[1].n_y / 1.2);
             balls[1].alive = 0;
             balls[3].alive = 1;
             balls[4].alive = 1;
@@ -180,9 +195,9 @@ void ball_divition(int ball_id)
             balls[5].poz_y = balls[2].poz_y - balls[2].radius;
             balls[6].poz_y = balls[2].poz_y - balls[2].radius;
             balls[5].n_x = balls[2].n_x / 1.2;
-            balls[5].n_y = balls[2].n_y / 1.2;
+            balls[5].n_y = fabs(balls[2].n_y / 1.2);
             balls[6].n_x = balls[2].n_x * (-1.0) / 1.2;
-            balls[6].n_y = balls[2].n_y / 1.2;
+            balls[6].n_y = fabs(balls[2].n_y / 1.2);
             balls[2].alive = 0;
             balls[5].alive = 1;
             balls[6].alive = 1;
