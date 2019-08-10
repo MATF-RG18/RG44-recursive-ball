@@ -40,7 +40,7 @@ void init_ball(void)
         balls[i].alive = 0;
     }
     srand(time(NULL));
-    balls[0].radius = 0.1;
+    balls[0].radius = 0.2;
     balls[0].poz_x = ((double)rand() / (double)RAND_MAX) * (right_wall - balls[0].radius) * (rand() / (double)RAND_MAX > 0.5 ? 1.0 : -1.0);
     balls[0].poz_y = ((double)rand() / (double)RAND_MAX) * (top_wall - balls[0].radius);
     double tmp_x = -(double)rand() / (double)RAND_MAX;
@@ -51,7 +51,7 @@ void init_ball(void)
 
     if (nivo == 2)
     {
-        balls[0].radius = 0.2;
+        balls[0].radius = 0.1;
     }
 
     balls[0].alive = 1;
