@@ -37,6 +37,7 @@ double left_wall = -1.79, right_wall = 1.79, bottom_wall = -1.0, top_wall = 1.0;
 /*player coordinates*/
 extern double player_x;
 extern double player_movement;
+extern double player_height;
 
 /*describe weapon*/
 extern double weapon_position;
@@ -57,6 +58,7 @@ static void on_reshape(int width, int height);
 static void on_display(void);
 static void display_start_screen(void);
 static void display_end_screen(void);
+static void display_next_level(void);
 static void on_timer(int value);
 
 //static void initialize_texture(void);
@@ -98,6 +100,7 @@ int main(int argc, char **argv)
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_LIGHTING);
+  glEnable(GL_TEXTURE_2D);
 
   init_ball();
 
@@ -140,10 +143,21 @@ static void on_keyboard(unsigned char key, int x, int y)
   case 'p':
   case 'P':
     /*animation end*/
-    animation_ongoing = 0;
+    if (animation_ongoing == 1)
+    {
+      animation_ongoing = 0;
+    }
+    else
+    {
+      animation_ongoing = 1;
+      glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
+    }
     break;
   case 'r':
   case 'R':
+    start_game = 1;
+    game_end = 0;
+    game_success = 0;
     glutDisplayFunc(display_start_screen);
     break;
   case 'a':
@@ -157,28 +171,15 @@ static void on_keyboard(unsigned char key, int x, int y)
       weapon_fired = 1;
     }
     break;
-    /*
-  case '1':
-    nivo = 1;
+  case 'n':
+  case 'N':
+    animation_ongoing = 1;
+    balls_left = 7;
     init_ball();
     init_weapon();
     glutDisplayFunc(on_display);
     glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
     break;
-  case '2':
-    nivo = 2;
-    init_ball();
-    init_weapon();
-    glutDisplayFunc(on_display);
-    glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
-    break;
-  case '3':
-    nivo = 3;
-    init_ball();
-    init_weapon();
-    glutDisplayFunc(on_display);
-    glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
-    break;*/
   }
 }
 
@@ -211,6 +212,7 @@ static void on_timer(int value)
     top_wall = 1.0;
     speed = 30.0;
     start_game = 1;
+    game_success = 0;
     nivo = 1;
     balls_left = 7;
   }
@@ -228,6 +230,17 @@ static void on_timer(int value)
   if (nivo == 3)
   {
     top_wall -= 0.001;
+  }
+
+  if (balls_left == 0)
+  {
+    animation_ongoing = 0;
+    glutDisplayFunc(display_next_level);
+  }
+
+  if (bottom_wall + player_height >= top_wall)
+  {
+    game_end = 1;
   }
 
   glutPostRedisplay();
@@ -262,6 +275,37 @@ static void on_display(void)
   glFlush();
   glutSwapBuffers();
 }
+static void display_next_level(void)
+{
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  gluLookAt(0, 0, 5,
+            0, 0, 0,
+            0, 1, 0);
+
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+  glColor3f(1, 1, 1);
+  bitmap_output(-4.9, -2.3, " Press - s - for start ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, -2.5, " Press - esc - for exit ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, -2.7, " Press - p - to pause the game ", GLUT_BITMAP_TIMES_ROMAN_24);
+
+  bitmap_output(-4.9, 2.7, " Press - f - to fire   ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, 2.5, " Press - a - to go left ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, 2.3, " Press - d- to go right ", GLUT_BITMAP_TIMES_ROMAN_24);
+
+  glColor3f(0.7, 0.7, 0.7);
+  bitmap_output(-1.0, 0.0, "PRESS - N - TO CONTINUE", GLUT_BITMAP_TIMES_ROMAN_24);
+
+  glEnable(GL_LIGHTING);
+  glEnable(GL_TEXTURE_2D);
+
+  glFlush();
+  glutSwapBuffers();
+}
+
 static void display_start_screen(void)
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -276,14 +320,14 @@ static void display_start_screen(void)
 
   glDisable(GL_LIGHTING);
   glDisable(GL_TEXTURE_2D);
-  glColor3f(0.8, 0.8, 0.8);
+  glColor3f(1, 1, 1);
   bitmap_output(-4.9, -2.3, " Press - s - for start ", GLUT_BITMAP_TIMES_ROMAN_24);
   bitmap_output(-4.9, -2.5, " Press - esc - for exit ", GLUT_BITMAP_TIMES_ROMAN_24);
   bitmap_output(-4.9, -2.7, " Press - p - to pause the game ", GLUT_BITMAP_TIMES_ROMAN_24);
 
-  /*(-4.9, 2.7, " FireBall ", GLUT_BITMAP_TIMES_ROMAN_24);
-  bitmap_output(-4.9, 2.5, " Game has 3 levels ", GLUT_BITMAP_TIMES_ROMAN_24);
-  bitmap_output(-4.9, 2.3, " Good luck! ", GLUT_BITMAP_TIMES_ROMAN_24);*/
+  bitmap_output(-4.9, 2.7, " Press - f - to fire   ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, 2.5, " Press - a - to go left ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, 2.3, " Press - d- to go right ", GLUT_BITMAP_TIMES_ROMAN_24);
 
   glEnable(GL_LIGHTING);
   glEnable(GL_TEXTURE_2D);
@@ -308,6 +352,10 @@ static void display_end_screen(void)
   bitmap_output(-4.9, -2.3, " Press - s - for start ", GLUT_BITMAP_TIMES_ROMAN_24);
   bitmap_output(-4.9, -2.5, " Press - esc - for exit ", GLUT_BITMAP_TIMES_ROMAN_24);
   bitmap_output(-4.9, -2.7, " Press - p - to pause the game ", GLUT_BITMAP_TIMES_ROMAN_24);
+
+  bitmap_output(-4.9, 2.7, " Press - f - to fire   ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, 2.5, " Press - a - to go left ", GLUT_BITMAP_TIMES_ROMAN_24);
+  bitmap_output(-4.9, 2.3, " Press - d- to go right ", GLUT_BITMAP_TIMES_ROMAN_24);
 
   glEnable(GL_LIGHTING);
   glEnable(GL_TEXTURE_2D);

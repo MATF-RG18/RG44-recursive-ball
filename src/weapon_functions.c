@@ -8,11 +8,6 @@
 #include "ball_functions.h"
 #include "textures.h"
 
-//#define WALLTEXTURE 0
-//#define FLOORTEXTURE 1
-
-//define TEXTURE_NUMBER 6
-
 double weapon_height = -1.0;
 double weapon_speed = 0.09;
 double weapon_position = 0;
@@ -85,9 +80,10 @@ void check_hit()
                         game_success = 1;
                         break;
                     }
+                    /*
                     balls_left = 7;
                     init_ball();
-                    init_weapon();
+                    init_weapon();*/
                 }
 
                 break;
