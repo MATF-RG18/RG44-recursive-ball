@@ -36,6 +36,7 @@ void draw_player(void)
     GLUquadric *players_leftarm = gluNewQuadric();
     GLUquadric *players_rightarm = gluNewQuadric();
     glPushMatrix();
+    glDisable(GL_LIGHTING);
     /*body */
     glTranslatef(player_x, player_y, player_z);
     glRotatef(90, -1, 0, 0);
@@ -69,6 +70,7 @@ void draw_player(void)
     gluQuadricNormals(players_leftarm, GLU_SMOOTH);
     gluCylinder(players_leftarm, player_radius / 2.0, player_radius / 2.0, player_height / 3.0, 50, 50);
 
+    glEnable(GL_LIGHTING);
     glPopMatrix();
 }
 void player_moving(char c)

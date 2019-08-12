@@ -4,7 +4,7 @@ CFLAGS  = -g -Wall -I/usr/X11R6/include -I/usr/pkg/include
 LDFLAGS = -L/usr/X11R6/lib -L/usr/pkg/lib
 LDLIBS  = -lglut -lGLU -lGL -lm
 
-$(PROGRAM): fireball.o ball_functions.o player_functions.o weapon_functions.o background.o textures.o bitmap_functions.o
+$(PROGRAM): fireball.o ball_functions.o player_functions.o weapon_functions.o background.o textures.o bitmap_functions.o callback_functions.o
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $^ $(LDLIBS)
 	
 fireball.o: fireball.c
@@ -26,6 +26,9 @@ background.o: background.c
 	$(CC) $(CFLAGS) -c $^  	
 
 bitmap_functions.o: bitmap_functions.c 
+	$(CC) $(CFLAGS) -c $^  
+
+callback_functions.o: callback_functions.c 
 	$(CC) $(CFLAGS) -c $^  
 
 

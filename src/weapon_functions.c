@@ -35,17 +35,18 @@ void fire_weapon()
 {
     if (weapon_fired == 1 && weapon_height <= top_wall + eps)
     {
-        glLineWidth(2.1);
-        glBegin(GL_LINES);
-
-        glColor3f(0, 0, 1);
-        glDisable(GL_LIGHTING);
+        glLineWidth(3.1);
         glDisable(GL_TEXTURE_2D);
+
+        weapon_light();
+        //glColor3f(0, 0, 1.0);
+
+        glBegin(GL_LINES);
         glVertex3f(weapon_position, -1.0 + player_height, 0);
         glVertex3f(weapon_position, weapon_height, 0);
 
         glEnd();
-        glEnable(GL_LIGHTING);
+
         glEnable(GL_TEXTURE_2D);
 
         glLineWidth(1.f);
@@ -90,4 +91,16 @@ void check_hit()
             }
         }
     }
+}
+void weapon_light(void)
+{
+    GLfloat ambient_coeffs[] = {9.0 / 255., 41.0 / 255.0, 129.0 / 255.0, 1};
+    GLfloat diffuse_coeffs[] = {14.0 / 255.0, 60.0 / 255.0, 185.0 / 255.0, 1};
+    GLfloat specular_coeffs[] = {0.2, 0.2, 0.2, 0.2};
+    GLfloat shininess = 30;
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_coeffs);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_coeffs);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specular_coeffs);
+    glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 }

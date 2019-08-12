@@ -10,5 +10,6 @@
 void init_weapon();
 void fire_weapon();
 void check_hit();
+void weapon_light(void);
 
 #endif

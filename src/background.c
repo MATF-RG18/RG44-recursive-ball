@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include "background.h"
 
+//skinut kod sa vezbi
+
 Background *background_init(int width, int height)
 {
     Background *background;
