@@ -261,7 +261,6 @@ void display_win_screen(void)
     bitmap_output(-4.9, 2.7, " Press - f - to fire   ", GLUT_BITMAP_TIMES_ROMAN_24);
     bitmap_output(-4.9, 2.5, " Press - a - to go left ", GLUT_BITMAP_TIMES_ROMAN_24);
     bitmap_output(-4.9, 2.3, " Press - d- to go right ", GLUT_BITMAP_TIMES_ROMAN_24);
-    bitmap_output(-4.9, 2.1, " Press - c - to continue", GLUT_BITMAP_TIMES_ROMAN_24);
 
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
