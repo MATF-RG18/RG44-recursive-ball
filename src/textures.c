@@ -12,8 +12,10 @@
 #define HEADTEXTURE 4
 #define GAMEOVER 5
 #define GAMESTART 6
+#define NEXTLEVEL 7
+#define WIN 8
 
-#define TEXTURE_NUMBER 7
+#define TEXTURE_NUMBER 9
 
 GLuint textureNames[TEXTURE_NUMBER];
 
@@ -32,12 +34,14 @@ void initialize_textures()
   char *fileName2 = "textures/floor.bmp";
   char *fileName3 = "textures/ball_texture.bmp";
   char *fileName4 = "textures/body_texture.bmp";
-  char *fileName5 = "textures/head_texture.bmp";
+  char *fileName5 = "textures/head.bmp";
   char *fileName6 = "textures/game_over.bmp";
   char *fileName7 = "textures/start_game.bmp";
+  char *fileName8 = "textures/next_level.bmp";
+  char *fileName9 = "textures/you_win.bmp";
 
   background_read(background, fileName1);
-  glGenTextures(6, textureNames);
+  glGenTextures(8, textureNames);
 
   glBindTexture(GL_TEXTURE_2D, textureNames[WALLTEXTURE]);
   glTexParameteri(GL_TEXTURE_2D,
@@ -98,13 +102,13 @@ void initialize_textures()
 
   //glBindTexture(GL_TEXTURE_2D, 0);
 
-  /*arm textures */
+  /*head textures */
   background_read(background, fileName5);
   glBindTexture(GL_TEXTURE_2D, textureNames[HEADTEXTURE]);
   glTexParameteri(GL_TEXTURE_2D,
-                  GL_TEXTURE_WRAP_S, GL_REPEAT);
+                  GL_TEXTURE_WRAP_S, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_2D,
-                  GL_TEXTURE_WRAP_T, GL_REPEAT);
+                  GL_TEXTURE_WRAP_T, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
@@ -127,9 +131,35 @@ void initialize_textures()
                GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
   //glBindTexture(GL_TEXTURE_2D, 0);
 
-  /*gamestart */
+  //gamestart
   background_read(background, fileName7);
   glBindTexture(GL_TEXTURE_2D, textureNames[GAMESTART]);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+               background->width, background->height, 0,
+               GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
+
+  //next level texture
+  background_read(background, fileName8);
+  glBindTexture(GL_TEXTURE_2D, textureNames[NEXTLEVEL]);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D,
+                  GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+               background->width, background->height, 0,
+               GL_RGB, GL_UNSIGNED_BYTE, background->pixels);
+
+  //win texture
+  background_read(background, fileName9);
+  glBindTexture(GL_TEXTURE_2D, textureNames[WIN]);
   glTexParameteri(GL_TEXTURE_2D,
                   GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D,

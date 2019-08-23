@@ -16,10 +16,11 @@ extern double eps;
 extern Positions balls[7];
 
 extern double player_height;
+extern double player_radisu;
 
 extern double left_wall, right_wall, bottom_wall, top_wall;
 
-extern int nivo;
+extern int level;
 extern int game_success;
 
 int balls_left = 7;
@@ -74,10 +75,10 @@ void check_hit()
                 balls_left -= 1;
                 if (balls_left == 0)
                 {
-                    nivo += 1;
-                    if (nivo == 4)
+                    level += 1;
+                    if (level == 4)
                     {
-                        nivo = 0;
+                        level = 0;
                         game_success = 1;
                         break;
                     }

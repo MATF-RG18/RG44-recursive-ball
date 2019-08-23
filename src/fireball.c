@@ -10,10 +10,9 @@
 #include "weapon_functions.h"
 #include "textures.h"
 
-extern int animation_ongoing;
-
 int main(int argc, char **argv)
 {
+
   //glut init
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
@@ -21,7 +20,7 @@ int main(int argc, char **argv)
   //creating a window
   glutInitWindowSize(600, 600);
   glutInitWindowPosition(100, 100);
-  glutCreateWindow("Recursive-ball");
+  glutCreateWindow("Recursive ball");
 
   glutFullScreen();
 
@@ -29,6 +28,8 @@ int main(int argc, char **argv)
   glutKeyboardFunc(on_keyboard);
   glutReshapeFunc(on_reshape);
   glutDisplayFunc(display_start_screen);
+
+  initialize_textures();
 
   glutMainLoop();
 

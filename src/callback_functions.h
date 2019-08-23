@@ -13,8 +13,11 @@ void on_display(void);
 void display_next_level(void);
 void display_start_screen(void);
 void display_end_screen(void);
+void display_win_screen(void);
 void set_end_texture();
 void set_start_textures();
 void set_texture();
+void set_next_level_texture();
+void set_win_texture();
 
 #endif

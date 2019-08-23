@@ -10,12 +10,12 @@
 
 #define BODYTEXTURE 3
 #define HEADTEXTURE 4
-#define TEXTURE_NUMBER 7
+#define TEXTURE_NUMBER 9
 
 double player_x = 0, player_y = -1, player_z = 0;
-double player_radius = 0.075;
+double player_radius = 0.1;
 double player_movement = 0.05;
-double player_height = 0.2;
+double player_height = 0.25;
 
 extern int weapon_fired;
 
@@ -41,7 +41,7 @@ void draw_player(void)
     glTranslatef(player_x, player_y, player_z);
     glRotatef(90, -1, 0, 0);
     gluQuadricDrawStyle(players_body, GLU_FILL);
-    glBindTexture(GL_TEXTURE_2D, textureNames[HEADTEXTURE]);
+    glBindTexture(GL_TEXTURE_2D, textureNames[BODYTEXTURE]);
     gluQuadricTexture(players_body, GL_TRUE);
     gluQuadricNormals(players_body, GLU_SMOOTH);
     gluCylinder(players_body, player_radius, player_radius, player_height, 50, 50);
@@ -52,23 +52,27 @@ void draw_player(void)
     glBindTexture(GL_TEXTURE_2D, textureNames[HEADTEXTURE]);
     gluQuadricTexture(players_head, GL_TRUE);
     gluQuadricNormals(players_head, GLU_SMOOTH);
-    gluCylinder(players_head, player_radius / 2.0, player_radius / 2.0, player_radius / 1.5, 50, 50);
+    gluCylinder(players_head, player_radius / 2.0, player_radius / 2.0, player_radius / 1.0, 50, 50);
     glTranslatef(0, 0, -player_height);
 
     /*arms */
 
     glTranslatef(player_radius, 0, player_height / 2.0);
     gluQuadricDrawStyle(players_rightarm, GLU_FILL);
-    glBindTexture(GL_TEXTURE_2D, textureNames[HEADTEXTURE]);
+    glBindTexture(GL_TEXTURE_2D, textureNames[BODYTEXTURE]);
     gluQuadricTexture(players_rightarm, GL_TRUE);
     gluQuadricNormals(players_rightarm, GLU_SMOOTH);
-    gluCylinder(players_rightarm, player_radius / 2.0, player_radius / 2.0, player_height / 3.0, 50, 50);
+    gluCylinder(players_rightarm, player_radius / 2.0, player_radius / 2.0, player_height / 2.0, 50, 50);
     glTranslatef(-2.0 * player_radius, 0, 0);
+    if (weapon_fired)
+    {
+        glTranslatef(0, 0, 0.1);
+    }
     gluQuadricDrawStyle(players_leftarm, GLU_FILL);
-    glBindTexture(GL_TEXTURE_2D, textureNames[HEADTEXTURE]);
+    glBindTexture(GL_TEXTURE_2D, textureNames[BODYTEXTURE]);
     gluQuadricTexture(players_leftarm, GL_TRUE);
     gluQuadricNormals(players_leftarm, GLU_SMOOTH);
-    gluCylinder(players_leftarm, player_radius / 2.0, player_radius / 2.0, player_height / 3.0, 50, 50);
+    gluCylinder(players_leftarm, player_radius / 2.0, player_radius / 2.0, player_height / 2.0, 50, 50);
 
     glEnable(GL_LIGHTING);
     glPopMatrix();

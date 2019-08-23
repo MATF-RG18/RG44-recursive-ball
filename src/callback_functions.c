@@ -18,38 +18,42 @@
 #define FLOORTEXTURE 1
 #define GAMEOVER 5
 #define GAMESTART 6
+#define NEXTLEVEL 7
+#define WIN 8
 
-#define TEXTURE_NUMBER 7
+#define TEXTURE_NUMBER 9
 
-int nivo = 0;
+//game indicators
+int level = 0;
 int game_success = 0;
+int game_end = 0;
+int start_game = 1;
 
 extern GLuint textureNames[TEXTURE_NUMBER];
 
+//Ball definitions
 extern Positions balls[7];
 extern int balls_left;
 extern double speed;
 
-/*speed of ball and epsilon distance from walls and other balls*/
+//description of a room
 double left_wall = -1.79, right_wall = 1.79, bottom_wall = -1.0, top_wall = 1.0;
 
-/*player coordinates*/
+//player description
 extern double player_x;
 extern double player_movement;
 extern double player_height;
+extern double player_radius;
 
-/*describe weapon*/
+//weapon description
 extern double weapon_position;
 extern int weapon_fired;
 
-/*animation information*/
+//animation information
 int animation_ongoing = 0;
 
-/*information about camera*/
+//information about camera
 float cameraX = 0, cameraY = 0, cameraZ = 2.75;
-
-int game_end = 0;
-int start_game = 1;
 
 void on_keyboard(unsigned char key, int x, int y)
 {
@@ -65,7 +69,7 @@ void on_keyboard(unsigned char key, int x, int y)
         //animation start
         if (start_game == 1)
         {
-            nivo = 1;
+            level = 1;
             init_ball();
             init_weapon();
             glutDisplayFunc(on_display);
@@ -85,13 +89,14 @@ void on_keyboard(unsigned char key, int x, int y)
         if (animation_ongoing == 1)
         {
             animation_ongoing = 0;
+            break;
         }
         else
         {
-            animation_ongoing = 1;
             glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
+            animation_ongoing = 1;
+            break;
         }
-        break;
     case 'r':
     case 'R':
         start_game = 1;
@@ -106,7 +111,7 @@ void on_keyboard(unsigned char key, int x, int y)
     case 'f':
         if (weapon_fired == 0)
         {
-            weapon_position = player_x;
+            weapon_position = player_x - player_radius;
             weapon_fired = 1;
         }
         break;
@@ -153,7 +158,7 @@ void on_timer(int value)
         speed = 1.0;
         start_game = 1;
         game_success = 0;
-        nivo = 1;
+        level = 1;
         balls_left = 7;
     }
     if (game_success == 1)
@@ -163,12 +168,12 @@ void on_timer(int value)
         top_wall = 1.0;
         speed = 1.0;
         start_game = 1;
-        nivo = 1;
+        level = 1;
         balls_left = 7;
-        glutDisplayFunc(display_start_screen);
+        glutDisplayFunc(display_win_screen);
     }
 
-    if (nivo == 3)
+    if (level == 3)
     {
         top_wall -= 0.001;
     }
@@ -194,14 +199,14 @@ void on_timer(int value)
 void on_display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    /*information about the light*/
+    //information about the light
     GLfloat light_position[] = {0, 0, 1, 0};
     GLfloat light_ambient[] = {0.0, 0.0, 0.0, 1};
     GLfloat light_diffuse[] = {0.7, 0.7, 0.7, 1};
     GLfloat light_specular[] = {0.9, 0.9, 0.9, 1};
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
 
-    /*light*/
+    //light
     glEnable(GL_LIGHT0);
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
@@ -212,7 +217,7 @@ void on_display(void)
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
 
-    //*set the camera*/
+    //set the camera
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(cameraX, cameraY, cameraZ,
@@ -232,6 +237,38 @@ void on_display(void)
     glFlush();
     glutSwapBuffers();
 }
+void display_win_screen(void)
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(0, 0, 5,
+              0, 0, 0,
+              0, 1, 0);
+
+    set_win_texture();
+
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
+    glColor3f(0.8, 0, 0);
+    bitmap_output(-4.9, -2.3, " Press - s - for start ", GLUT_BITMAP_TIMES_ROMAN_24);
+    bitmap_output(-4.9, -2.5, " Press - esc - for exit ", GLUT_BITMAP_TIMES_ROMAN_24);
+    glColor3f(0.8, 0.8, 0.8);
+
+    bitmap_output(-4.9, -2.7, " Press - p - to pause the game ", GLUT_BITMAP_TIMES_ROMAN_24);
+
+    bitmap_output(-4.9, 2.7, " Press - f - to fire   ", GLUT_BITMAP_TIMES_ROMAN_24);
+    bitmap_output(-4.9, 2.5, " Press - a - to go left ", GLUT_BITMAP_TIMES_ROMAN_24);
+    bitmap_output(-4.9, 2.3, " Press - d- to go right ", GLUT_BITMAP_TIMES_ROMAN_24);
+    bitmap_output(-4.9, 2.1, " Press - c - to continue", GLUT_BITMAP_TIMES_ROMAN_24);
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
+
+    glFlush();
+    glutSwapBuffers();
+}
 void display_next_level(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -241,6 +278,8 @@ void display_next_level(void)
     gluLookAt(0, 0, 5,
               0, 0, 0,
               0, 1, 0);
+
+    set_next_level_texture();
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
@@ -252,9 +291,8 @@ void display_next_level(void)
     bitmap_output(-4.9, 2.7, " Press - f - to fire   ", GLUT_BITMAP_TIMES_ROMAN_24);
     bitmap_output(-4.9, 2.5, " Press - a - to go left ", GLUT_BITMAP_TIMES_ROMAN_24);
     bitmap_output(-4.9, 2.3, " Press - d- to go right ", GLUT_BITMAP_TIMES_ROMAN_24);
-
-    glColor3f(1, 1, 1);
-    bitmap_output(-1.0, 0.0, "PRESS - C - TO CONTINUE", GLUT_BITMAP_TIMES_ROMAN_24);
+    glColor3f(0.8, 0, 0);
+    bitmap_output(-4.9, -2.1, " Press - c - to continue", GLUT_BITMAP_TIMES_ROMAN_24);
 
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
@@ -277,8 +315,9 @@ void display_start_screen(void)
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
-    glColor3f(1, 1, 1);
+    glColor3f(0.8, 0, 0);
     bitmap_output(-4.9, -2.3, " Press - s - for start ", GLUT_BITMAP_TIMES_ROMAN_24);
+    glColor3f(1, 1, 1);
     bitmap_output(-4.9, -2.5, " Press - esc - for exit ", GLUT_BITMAP_TIMES_ROMAN_24);
     bitmap_output(-4.9, -2.7, " Press - p - to pause the game ", GLUT_BITMAP_TIMES_ROMAN_24);
 
@@ -293,7 +332,6 @@ void display_start_screen(void)
 
     animation_ongoing = 0;
 
-    initialize_textures();
     glFlush();
     glutSwapBuffers();
 }
@@ -311,9 +349,11 @@ void display_end_screen(void)
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
-    glColor3f(0.8, 0.8, 0.8);
+    glColor3f(0.8, 0, 0);
     bitmap_output(-4.9, -2.3, " Press - s - for start ", GLUT_BITMAP_TIMES_ROMAN_24);
+
     bitmap_output(-4.9, -2.5, " Press - esc - for exit ", GLUT_BITMAP_TIMES_ROMAN_24);
+    glColor3f(0.8, 0.8, 0.8);
     bitmap_output(-4.9, -2.7, " Press - p - to pause the game ", GLUT_BITMAP_TIMES_ROMAN_24);
 
     bitmap_output(-4.9, 2.7, " Press - f - to fire   ", GLUT_BITMAP_TIMES_ROMAN_24);
@@ -342,7 +382,30 @@ void set_end_texture()
 
     glTexCoord2f(0, 1);
     glVertex3f(-1, 1, 1);
+
     glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+void set_win_texture()
+{
+    glBindTexture(GL_TEXTURE_2D, textureNames[WIN]);
+    glBegin(GL_QUADS);
+    glNormal3f(0, 0, 1);
+
+    glTexCoord2f(0, 0);
+    glVertex3f(-1, -1, 1);
+
+    glTexCoord2f(1, 0);
+    glVertex3f(1, -1, 1);
+
+    glTexCoord2f(1, 1);
+    glVertex3f(1, 1, 1);
+
+    glTexCoord2f(0, 1);
+    glVertex3f(-1, 1, 1);
+
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 void set_start_textures()
 {
@@ -362,6 +425,28 @@ void set_start_textures()
     glTexCoord2f(0, 1);
     glVertex3f(-2, 2, 1);
     glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+void set_next_level_texture()
+{
+    glBindTexture(GL_TEXTURE_2D, textureNames[NEXTLEVEL]);
+    glBegin(GL_QUADS);
+    glNormal3f(0, 0, 1);
+
+    glTexCoord2f(0, 0);
+    glVertex3f(-2, -2, 1);
+
+    glTexCoord2f(1, 0);
+    glVertex3f(2, -2, 1);
+
+    glTexCoord2f(1, 1);
+    glVertex3f(2, 2, 1);
+
+    glTexCoord2f(0, 1);
+    glVertex3f(-2, 2, 1);
+
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 void set_texture()
 {
@@ -383,8 +468,9 @@ void set_texture()
     glVertex3f(left_wall, top_wall, -1);
     glEnd();
 
-    //left wall
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    //left wall
     glBindTexture(GL_TEXTURE_2D, textureNames[WALLTEXTURE]);
     glBegin(GL_QUADS);
     glNormal3f(0, 0, 1);
@@ -402,8 +488,9 @@ void set_texture()
     glVertex3f(left_wall, top_wall, 1);
     glEnd();
 
-    //right wall
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    //right wall
     glBindTexture(GL_TEXTURE_2D, textureNames[WALLTEXTURE]);
     glBegin(GL_QUADS);
     glNormal3f(0, 0, 1);

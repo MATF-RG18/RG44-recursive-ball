@@ -7,7 +7,7 @@
 #include "ball_functions.h"
 
 #define SPHERETEXTURE 2
-#define TEXTURE_NUMBER 7
+#define TEXTURE_NUMBER 9
 
 Positions balls[7];
 extern GLuint textureNames[TEXTURE_NUMBER];
@@ -20,22 +20,19 @@ double eps = 0.0001;
 
 extern double left_wall, right_wall, bottom_wall, top_wall;
 
-extern int nivo;
+extern int level;
 
 void init_ball(void)
 {
 
     speed = 1.0;
-    if (nivo == 2)
+
+    if (level == 2 || level == 3)
     {
         speed = 2.0;
     }
 
-    if (nivo == 3)
-    {
-        speed = 3.0;
-    }
-    for (int i = 0; i < 7; i++)
+     for (int i = 0; i < 7; i++)
     {
         balls[i].poz_x = 0;
         balls[i].poz_y = 0;
@@ -53,7 +50,7 @@ void init_ball(void)
     balls[0].n_x = 0.02 * speed;
     balls[0].n_y = 0.02 * speed;
 
-    if (nivo == 2)
+    if (level == 2)
     {
         balls[0].radius = 0.1;
     }
