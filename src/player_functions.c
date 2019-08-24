@@ -66,7 +66,7 @@ void draw_player(void)
     glTranslatef(-2.0 * player_radius, 0, 0);
     if (weapon_fired)
     {
-        glTranslatef(0, 0, 0.1);
+        glTranslatef(0, 0, 0.085);
     }
     gluQuadricDrawStyle(players_leftarm, GLU_FILL);
     glBindTexture(GL_TEXTURE_2D, textureNames[BODYTEXTURE]);

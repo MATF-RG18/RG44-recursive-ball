@@ -15,7 +15,7 @@ extern GLuint textureNames[TEXTURE_NUMBER];
 int angle = 0;
 
 /*ball speed*/
-double speed = 1.0;
+double speed = 1.5;
 double eps = 0.0001;
 
 extern double left_wall, right_wall, bottom_wall, top_wall;
@@ -25,14 +25,14 @@ extern int level;
 void init_ball(void)
 {
 
-    speed = 1.0;
+    speed = 1.5;
 
     if (level == 2 || level == 3)
     {
         speed = 2.0;
     }
 
-     for (int i = 0; i < 7; i++)
+    for (int i = 0; i < 7; i++)
     {
         balls[i].poz_x = 0;
         balls[i].poz_y = 0;

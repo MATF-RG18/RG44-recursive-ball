@@ -5,6 +5,7 @@
 
 #include "bitmap_functions.h"
 
+//kod skinut sa interneta https://www.opengl.org/archives/resources/code/samples/glut_examples/examples/examples.html
 void bitmap_output(float x, float y, char *string, void *font)
 {
     glPushMatrix();

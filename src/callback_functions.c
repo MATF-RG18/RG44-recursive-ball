@@ -28,10 +28,13 @@ int level = 0;
 int game_success = 0;
 int game_end = 0;
 int start_game = 1;
+int animation_ongoing = 0;
+// if next_level=0 button c doesnt work
+int next_level = 0;
 
 extern GLuint textureNames[TEXTURE_NUMBER];
 
-//Ball definitions
+//description of a ball
 extern Positions balls[7];
 extern int balls_left;
 extern double speed;
@@ -48,9 +51,6 @@ extern double player_radius;
 //weapon description
 extern double weapon_position;
 extern int weapon_fired;
-
-//animation information
-int animation_ongoing = 0;
 
 //information about camera
 float cameraX = 0, cameraY = 0, cameraZ = 2.75;
@@ -70,18 +70,19 @@ void on_keyboard(unsigned char key, int x, int y)
         if (start_game == 1)
         {
             level = 1;
+            next_level = 0;
             init_ball();
             init_weapon();
             glutDisplayFunc(on_display);
             glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
-
+            animation_ongoing = 1;
             start_game = 0;
         }
-        if (!animation_ongoing)
+        /*  if (!animation_ongoing)
         {
             glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
             animation_ongoing = 1;
-        }
+        }*/
         break;
     case 'p':
     case 'P':
@@ -99,9 +100,12 @@ void on_keyboard(unsigned char key, int x, int y)
         }
     case 'r':
     case 'R':
+        //animation restart
         start_game = 1;
         game_end = 0;
         game_success = 0;
+        animation_ongoing = 0;
+        next_level = 0;
         glutDisplayFunc(display_start_screen);
         break;
     case 'a':
@@ -117,12 +121,18 @@ void on_keyboard(unsigned char key, int x, int y)
         break;
     case 'c':
     case 'C':
-        animation_ongoing = 1;
-        balls_left = 7;
-        init_ball();
-        init_weapon();
-        glutDisplayFunc(on_display);
-        glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
+        //next level
+        if (next_level == 1)
+        {
+            balls_left = 7;
+            init_ball();
+            init_weapon();
+            next_level = 0;
+            glutDisplayFunc(on_display);
+            glutTimerFunc(TIMER_INTERVAL, on_timer, TIMER_ID);
+            animation_ongoing = 1;
+        }
+
         break;
     }
 }
@@ -151,8 +161,8 @@ void on_timer(int value)
 
     if (game_end)
     {
-        glutDisplayFunc(display_end_screen);
         //gameover - initialize game variables
+
         game_end = 0;
         top_wall = 1.0;
         speed = 1.0;
@@ -160,6 +170,9 @@ void on_timer(int value)
         game_success = 0;
         level = 1;
         balls_left = 7;
+        animation_ongoing = 0;
+        next_level = 0;
+        glutDisplayFunc(display_end_screen);
     }
     if (game_success == 1)
     {
@@ -170,6 +183,8 @@ void on_timer(int value)
         start_game = 1;
         level = 1;
         balls_left = 7;
+        animation_ongoing = 0;
+        next_level = 0;
         glutDisplayFunc(display_win_screen);
     }
 
@@ -181,6 +196,7 @@ void on_timer(int value)
     if (balls_left == 0)
     {
         animation_ongoing = 0;
+        next_level = 1;
         glutDisplayFunc(display_next_level);
     }
 
