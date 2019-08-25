@@ -2,7 +2,7 @@
 ___
 
 ### :memo: Opis igrice:
-"Resursive ball" je igrica koja se sastoji od tri nivoa. Cilj igrice je unistiti lopte, koje se krecu u zatvorenoj prostoriji i smrtonosne su za igraca. Igrac :robot: gadjajuci svojim laserom, unistava :black_circle: :black_circle: deleci ih na manje. 
+"Resursive ball" je igrica koja se sastoji iz tri nivoa tezine. Cilj igrice je unistiti loptice, koje se krecu u 3D-zatvorenoj prostoriji i smrtonosne su za igraca ukoliko loptica udari u njega. Svaki nivo je tezi od prethodnog. Tezina nivoa je koncipirana tako da se u drugom nivou loptice krecu brze nego u prvom nivou, dok je treci nivo otezan brzom kretnjom loptica ali i spustanjem plafona prostorije kako vreme igranja igrice odmice i time dodatno otezava prelazak poslednjeg nivoa. Igrac :robot: gadjajuci svojim laserom, unistava :black_circle: deleci ih na manje. U trenutku ispaljivanja lasera do njegovog udaranja u plafon, igracu je onemoguceno kretanje levo, odnosno desno. 
 ___
 
 ### :video_game: Komande igrice:
