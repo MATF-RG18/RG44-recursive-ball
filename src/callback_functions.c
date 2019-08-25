@@ -113,6 +113,7 @@ void on_keyboard(unsigned char key, int x, int y)
         player_moving(key);
         break;
     case 'f':
+    case 32:
         if (weapon_fired == 0)
         {
             weapon_position = player_x - player_radius;
