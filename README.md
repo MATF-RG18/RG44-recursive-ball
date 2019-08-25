@@ -22,6 +22,6 @@ ___
 git clone https://github.com/MATF-RG18/RG44-recursive-ball.git
 ```
  Pozicionirajte se u direktorijum `RG44-recursive-ball/Src/` <br>
- Pokrenite Makefile `make recursive_ball` <br>
- Pokrenite igricu komandom `./recursive_ball` 
+ Pokrenite Makefile `make fireball` <br>
+ Pokrenite igricu komandom `./fireball` 
 
